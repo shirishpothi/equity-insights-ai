@@ -39,8 +39,15 @@ import {
   Download,
   LoaderCircle,
   Terminal,
+  History,
+  Save,
 } from 'lucide-react';
 import { analysisSections } from '@/lib/constants';
+import { useAuth } from '@/contexts/auth-context';
+import { LoginButton } from '@/components/auth/login-button';
+import { UserMenu } from '@/components/auth/user-menu';
+import { analysisHistoryService } from '@/lib/analysis-history';
+import Link from 'next/link';
 
 
 const formSchema = z.object({
@@ -52,10 +59,14 @@ const formSchema = z.object({
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalyzeStockOutput | null>(null);
   const [submittedTicker, setSubmittedTicker] = useState<string | null>(null);
+  const [submittedData, setSubmittedData] = useState<z.infer<typeof formSchema> | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast()
+  const [authPrompt, setAuthPrompt] = useState(false);
+  const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
 
   const [isCopied, setIsCopied] = useState(false);
   const [suggestions, setSuggestions] = useState<TickerSuggestionOutput>([]);
@@ -90,16 +101,53 @@ export default function Home() {
     setAnalysisResult(null);
     setError(null);
     setSubmittedTicker(values.ticker);
+    setSubmittedData(values);
+    setAuthPrompt(false);
 
     const result = await handleStockAnalysis(values);
 
     if (result.success) {
       setAnalysisResult(result.data);
+
+      // Auto-save if user is authenticated
+      if (user) {
+        await saveAnalysisToHistory(values, result.data);
+      } else {
+        setAuthPrompt(true);
+      }
     } else {
       setError(result.error);
     }
     setIsLoading(false);
   }
+
+  const saveAnalysisToHistory = async (formData: z.infer<typeof formSchema>, analysisData: AnalyzeStockOutput) => {
+    if (!user) return;
+
+    setIsSaving(true);
+    const result = await analysisHistoryService.saveAnalysis({
+      ticker: formData.ticker,
+      investment_thesis: formData.investmentThesis,
+      investment_goal: formData.goal,
+      analysis_result: analysisData
+    });
+
+    if (result.success) {
+      toast({
+        title: "Analysis Saved",
+        description: "Your analysis has been saved to your history.",
+      });
+    } else {
+      console.error('Failed to save analysis:', result.error);
+      // Don't show error toast for save failures to avoid disrupting user experience
+    }
+    setIsSaving(false);
+  };
+
+  const handleManualSave = async () => {
+    if (!user || !submittedData || !analysisResult) return;
+    await saveAnalysisToHistory(submittedData, analysisResult);
+  };
   
   const handleCopy = () => {
     if (!analysisResult) return;
@@ -212,6 +260,25 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center p-4 sm:p-8 md:p-12">
       <div className="w-full max-w-4xl mx-auto flex flex-grow flex-col">
         <div className="flex-grow">
+          {/* Navigation Bar */}
+          <nav className="flex justify-between items-center mb-8">
+            <div className="flex items-center space-x-4">
+              {user && (
+                <Button variant="outline" asChild>
+                  <Link href="/history">
+                    <History className="mr-2 h-4 w-4" />
+                    History
+                  </Link>
+                </Button>
+              )}
+            </div>
+            <div className="flex items-center space-x-4">
+              {!authLoading && (
+                user ? <UserMenu /> : <LoginButton variant="outline" />
+              )}
+            </div>
+          </nav>
+
           <header className="text-center mb-12">
             <h1 className="font-headline text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight bg-gradient-to-br from-foreground via-violet-400 to-accent text-transparent bg-clip-text animated-gradient-text drop-shadow-[0_0_12px_hsl(var(--accent)/0.5)]">
               Equity Insights AI
@@ -219,6 +286,11 @@ export default function Home() {
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
               Your personal AI analyst. Validate your investment thesis with in-depth analysis powered by AI.
             </p>
+            {user && (
+              <p className="mt-2 text-sm text-muted-foreground">
+                Welcome back, {user.user_metadata?.full_name || user.email}! Your analyses are automatically saved.
+              </p>
+            )}
           </header>
 
           <Card className="w-full shadow-2xl shadow-primary/10 bg-card/50 backdrop-blur-sm border-white/10 purple-glow">
@@ -356,11 +428,44 @@ export default function Home() {
             </div>
           )}
 
+          {authPrompt && analysisResult && !user && (
+            <div className="mt-8 animate-slide-up-fade">
+              <Alert className="bg-primary/10 border-primary">
+                <Save className="h-4 w-4" />
+                <AlertTitle>Save Your Analysis</AlertTitle>
+                <AlertDescription className="mt-2">
+                  <p className="mb-3">Sign in to save this analysis to your history and access it anytime.</p>
+                  <LoginButton size="sm" />
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+
           {analysisResult && (
             <div className="mt-12 animate-slide-up-fade">
               <div className="flex justify-between items-center mb-4">
                   <h2 className="text-3xl font-headline font-bold">Analysis Report</h2>
                   <div className="flex items-center gap-2">
+                      {user && submittedData && (
+                        <Button
+                          variant="outline"
+                          onClick={handleManualSave}
+                          disabled={isSaving}
+                          className="purple-glow"
+                        >
+                          {isSaving ? (
+                            <>
+                              <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="mr-2 h-4 w-4" />
+                              Save
+                            </>
+                          )}
+                        </Button>
+                      )}
                       <Button variant="outline" onClick={handleCopy} className="purple-glow w-[130px]">
                           {isCopied ? (
                               <CheckCircle2 className="mr-2 h-4 w-4 animate-pop-in" />
