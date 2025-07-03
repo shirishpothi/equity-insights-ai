@@ -15,10 +15,14 @@
 ## ✨ Features
 
 - **🔍 AI-Powered Stock Analysis**: Get detailed fundamental analysis using advanced AI models
+- **🔐 User Authentication**: Secure Google OAuth login with Supabase backend
+- **📚 Analysis History**: Save and manage your analysis history with search functionality
 - **📊 Comprehensive Reports**: Five-section analysis covering fundamentals, thesis validation, sector view, catalysts, and investment summary
 - **🎯 Thesis Validation**: Validate your investment ideas with data-driven insights
 - **📈 Real-time Ticker Suggestions**: Smart autocomplete for stock symbols
 - **📄 PDF Export**: Generate professional PDF reports for your analysis
+- **👤 User Profiles**: Manage your account and view personal analysis history
+- **🛡️ Row Level Security**: Your data is private and secure with database-level protection
 - **📋 Copy to Clipboard**: Easy sharing of analysis results
 - **🎨 Modern UI**: Beautiful, responsive interface with dark theme and smooth animations
 - **⚡ Fast Performance**: Built with Next.js 15 and optimized for speed
@@ -30,6 +34,18 @@
 - Node.js 18.0 or later
 - npm, yarn, or pnpm
 - Google AI API key (for Genkit integration)
+- Supabase account (for authentication and data storage)
+
+## 🌐 Deployment
+
+For production deployment with full AI functionality, see our comprehensive [Deployment Guide](DEPLOYMENT.md).
+
+**Quick deployment options:**
+- **Vercel** (Recommended): Full functionality with serverless functions
+- **Netlify**: Full functionality with serverless functions
+- **GitHub Pages**: Static demo only (limited functionality)
+
+The application is configured to work seamlessly with modern hosting platforms that support Next.js and serverless functions.
 
 ### Installation
 
@@ -53,9 +69,18 @@
    cp .env.example .env.local
    ```
 
-   Add your Google AI API key to `.env.local`:
+   Add your API keys to `.env.local`:
    ```env
-   GOOGLE_GENAI_API_KEY=your_api_key_here
+   # Google AI API Key (required)
+   GOOGLE_GENAI_API_KEY=your_google_ai_api_key_here
+
+   # Supabase Configuration (required for authentication)
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+   # Next.js Configuration
+   NEXT_PUBLIC_APP_URL=http://localhost:9002
    ```
 
 4. **Run the development server**
@@ -163,10 +188,33 @@ Create a `.env.local` file with the following variables:
 # Google AI API Key (required)
 GOOGLE_GENAI_API_KEY=your_api_key_here
 
-# Optional: Firebase configuration
-FIREBASE_PROJECT_ID=your_project_id
-FIREBASE_API_KEY=your_firebase_api_key
+# Supabase Configuration (required for authentication)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Next.js Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:9002
 ```
+
+## 🔐 Authentication & Data Storage
+
+This application uses **Supabase** for authentication and data storage, providing:
+
+- **Google OAuth Login**: Secure authentication with Google accounts
+- **User Profiles**: Automatic profile creation and management
+- **Analysis History**: Save and retrieve your stock analyses
+- **Row Level Security**: Database-level security ensuring data privacy
+- **Real-time Updates**: Instant synchronization across sessions
+
+### Setting up Authentication
+
+1. **Create a Supabase Project**: Visit [supabase.com](https://supabase.com) and create a new project
+2. **Configure Google OAuth**: Set up Google OAuth in your Supabase dashboard
+3. **Set Environment Variables**: Add your Supabase credentials to `.env.local`
+4. **Database Setup**: The required tables and security policies are automatically configured
+
+For detailed authentication setup instructions, see [AUTHENTICATION.md](./AUTHENTICATION.md).
 
 ## 🤝 Contributing
 

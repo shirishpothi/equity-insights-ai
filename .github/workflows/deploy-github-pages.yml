@@ -1,8 +1,9 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages (Static Demo)
 
 on:
-  push:
-    branches: [ main ]
+  # Disabled by default - enable manually if you want static demo
+  # push:
+  #   branches: [ main ]
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages

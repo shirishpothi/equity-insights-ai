@@ -94,7 +94,7 @@ const nextConfig: NextConfig = {
   ...(isGitHubPages && {
     output: 'export',
     trailingSlash: true,
-    basePath: '/Equity Insights AI',
+    basePath: '/equity-insights-ai',
   }),
 
 };
