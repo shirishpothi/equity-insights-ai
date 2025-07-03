@@ -44,8 +44,12 @@ lerna-debug.log*
 .vercel
 
 # typescript
-*.tsbuildinfo
+# Keep *.tsbuildinfo for incremental compilation caching
 next-env.d.ts
+
+# Build caches (keep for faster rebuilds)
+# .next/cache/
+# node_modules/.cache/
 
 # environment variables
 .env*

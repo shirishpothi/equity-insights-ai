@@ -8,12 +8,17 @@
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
     "build:github-pages": "node scripts/build-github-pages.js",
+    "build:clean": "npm run cache:clean && npm run build",
+    "build:optimized": "npm run cache:optimize",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "cache:analyze": "node scripts/cache-management.js analyze",
+    "cache:clean": "node scripts/cache-management.js clean",
+    "cache:optimize": "node scripts/cache-management.js optimize"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.13.0",

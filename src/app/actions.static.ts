@@ -59,6 +59,7 @@ type SuggestionResult = {
   error: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function handleTickerSuggest(query: string): Promise<SuggestionResult> {
   // Return empty suggestions in static mode
   return { success: true, data: [] };
