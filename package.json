@@ -18,7 +18,8 @@
     "test:coverage": "jest --coverage",
     "cache:analyze": "node scripts/cache-management.js analyze",
     "cache:clean": "node scripts/cache-management.js clean",
-    "cache:optimize": "node scripts/cache-management.js optimize"
+    "cache:optimize": "node scripts/cache-management.js optimize",
+    "auth:setup": "node scripts/update-supabase-auth.js"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.13.0",

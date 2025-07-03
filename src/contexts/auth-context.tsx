@@ -59,12 +59,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Authentication is not configured')
     }
 
+    // Determine the correct redirect URL for different environments
+    const getRedirectUrl = () => {
+      // In production, use the current origin
+      if (typeof window !== 'undefined') {
+        return `${window.location.origin}/auth/callback`
+      }
+
+      // Fallback for SSR
+      return '/auth/callback'
+    }
+
+    const redirectTo = getRedirectUrl()
+    console.log('OAuth redirect URL:', redirectTo)
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
       }
     })
+
     if (error) {
       console.error('Error signing in with Google:', error.message)
       throw error

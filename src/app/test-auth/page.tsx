@@ -1,15 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { analysisHistoryService } from '@/lib/analysis-history'
+import { validateClientEnvironment } from '@/lib/env-validation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
 import { LoginButton } from '@/components/auth/login-button'
 import { UserMenu } from '@/components/auth/user-menu'
-import { LoaderCircle, CheckCircle, XCircle, Database, Shield, User } from 'lucide-react'
+import { LoaderCircle, CheckCircle, XCircle, Database, Shield, User, Settings } from 'lucide-react'
 
 export default function TestAuthPage() {
   const { user, loading } = useAuth()
@@ -18,12 +19,22 @@ export default function TestAuthPage() {
     auth: boolean | null
     database: boolean | null
     rls: boolean | null
+    environment: boolean | null
   }>({
     auth: null,
     database: null,
-    rls: null
+    rls: null,
+    environment: null
   })
   const [testing, setTesting] = useState(false)
+  const [envValidation, setEnvValidation] = useState<ReturnType<typeof validateClientEnvironment> | null>(null)
+
+  useEffect(() => {
+    // Validate environment on component mount
+    const validation = validateClientEnvironment()
+    setEnvValidation(validation)
+    setTestResults(prev => ({ ...prev, environment: validation.isValid }))
+  }, [])
 
   const runTests = async () => {
     if (!user) {
@@ -147,6 +158,32 @@ export default function TestAuthPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Environment Configuration */}
+            <div className="space-y-3">
+              <h3 className="font-semibold">Environment Configuration</h3>
+              <TestResult test={testResults.environment} label="Environment Variables" icon={Settings} />
+              {envValidation && !envValidation.isValid && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-sm font-medium text-red-800 mb-2">Configuration Issues:</p>
+                  <ul className="text-sm text-red-600 space-y-1">
+                    {envValidation.errors.map((error, index) => (
+                      <li key={index}>• {error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {envValidation && envValidation.warnings.length > 0 && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-sm font-medium text-yellow-800 mb-2">Warnings:</p>
+                  <ul className="text-sm text-yellow-600 space-y-1">
+                    {envValidation.warnings.map((warning, index) => (
+                      <li key={index}>• {warning}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold">Authentication Status</h3>
@@ -162,7 +199,7 @@ export default function TestAuthPage() {
             {user && (
               <>
                 <div className="space-y-3">
-                  <h3 className="font-semibold">Test Results</h3>
+                  <h3 className="font-semibold">Authentication Tests</h3>
                   <TestResult test={testResults.auth} label="Authentication" icon={User} />
                   <TestResult test={testResults.database} label="Database Operations" icon={Database} />
                   <TestResult test={testResults.rls} label="Row Level Security" icon={Shield} />
