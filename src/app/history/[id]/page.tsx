@@ -228,10 +228,9 @@ function AnalysisDetailContent() {
         </div>
 
         <div id="pdf-report">
-          <PdfReport 
+          <PdfReport
             ticker={analysis.ticker}
-            analysisResult={analysis.analysis_result}
-            submittedTicker={analysis.ticker}
+            analysis={analysis.analysis_result}
           />
         </div>
       </div>
