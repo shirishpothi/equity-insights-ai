@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase-client'
+import { isSupabaseConfigured } from './supabase'
 import type { Database } from './supabase'
 import type { AnalyzeStockOutput } from '@/ai/flows/analyze-stock'
 
@@ -21,8 +22,12 @@ export class AnalysisHistoryService {
 
   async saveAnalysis(data: CreateAnalysisHistoryData): Promise<{ success: boolean; error?: string; data?: AnalysisHistoryItem }> {
     try {
+      if (!isSupabaseConfigured()) {
+        return { success: false, error: 'Database not configured' }
+      }
+
       const { data: { user } } = await this.supabase.auth.getUser()
-      
+
       if (!user) {
         return { success: false, error: 'User not authenticated' }
       }
@@ -55,8 +60,12 @@ export class AnalysisHistoryService {
 
   async getAnalysisHistory(limit = 20, offset = 0): Promise<{ success: boolean; error?: string; data?: AnalysisHistoryItem[] }> {
     try {
+      if (!isSupabaseConfigured()) {
+        return { success: false, error: 'Database not configured' }
+      }
+
       const { data: { user } } = await this.supabase.auth.getUser()
-      
+
       if (!user) {
         return { success: false, error: 'User not authenticated' }
       }
@@ -82,8 +91,12 @@ export class AnalysisHistoryService {
 
   async getAnalysisById(id: string): Promise<{ success: boolean; error?: string; data?: AnalysisHistoryItem }> {
     try {
+      if (!isSupabaseConfigured()) {
+        return { success: false, error: 'Database not configured' }
+      }
+
       const { data: { user } } = await this.supabase.auth.getUser()
-      
+
       if (!user) {
         return { success: false, error: 'User not authenticated' }
       }
@@ -109,8 +122,12 @@ export class AnalysisHistoryService {
 
   async deleteAnalysis(id: string): Promise<{ success: boolean; error?: string }> {
     try {
+      if (!isSupabaseConfigured()) {
+        return { success: false, error: 'Database not configured' }
+      }
+
       const { data: { user } } = await this.supabase.auth.getUser()
-      
+
       if (!user) {
         return { success: false, error: 'User not authenticated' }
       }
@@ -135,8 +152,12 @@ export class AnalysisHistoryService {
 
   async getAnalysisCount(): Promise<{ success: boolean; error?: string; count?: number }> {
     try {
+      if (!isSupabaseConfigured()) {
+        return { success: false, error: 'Database not configured' }
+      }
+
       const { data: { user } } = await this.supabase.auth.getUser()
-      
+
       if (!user) {
         return { success: false, error: 'User not authenticated' }
       }
@@ -160,6 +181,10 @@ export class AnalysisHistoryService {
 
   async searchAnalyses(query: string, limit = 20): Promise<{ success: boolean; error?: string; data?: AnalysisHistoryItem[] }> {
     try {
+      if (!isSupabaseConfigured()) {
+        return { success: false, error: 'Database not configured' }
+      }
+
       const { data: { user } } = await this.supabase.auth.getUser()
       
       if (!user) {
