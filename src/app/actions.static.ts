@@ -59,7 +59,7 @@ type SuggestionResult = {
   error: string;
 };
 
-export async function handleTickerSuggest(): Promise<SuggestionResult> {
+export async function handleTickerSuggest(query: string): Promise<SuggestionResult> {
   // Return empty suggestions in static mode
   return { success: true, data: [] };
 }
