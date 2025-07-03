@@ -27,8 +27,5 @@
       "destination": "/auth/auth-code-error",
       "permanent": false
     }
-  ],
-  "env": {
-    "NEXT_PUBLIC_VERCEL_URL": "@vercel-url"
-  }
+  ]
 }

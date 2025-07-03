@@ -95,7 +95,7 @@ export default function TestAuthPage() {
         results.rls = false
       }
 
-      setTestResults(results)
+      setTestResults(prev => ({ ...prev, ...results }))
       
       if (results.auth && results.database && results.rls) {
         toast({
