@@ -35,15 +35,12 @@ import html2canvas from 'html2canvas';
 import { cn } from '@/lib/utils';
 import {
   CheckCircle2,
-  ClipboardList,
   Copy,
   Download,
-  FileText,
-  Globe,
   LoaderCircle,
   Terminal,
-  Zap
 } from 'lucide-react';
+import { analysisSections } from '@/lib/constants';
 
 
 const formSchema = z.object({
@@ -51,15 +48,6 @@ const formSchema = z.object({
   investmentThesis: z.string().min(25, 'Please provide a more detailed investment thesis (at least 25 characters).'),
   goal: z.string().min(15, 'Please describe your investment goal (at least 15 characters).'),
 });
-
-export const analysisSections = [
-  { key: 'fundamentalAnalysis', title: 'Fundamental Analysis', icon: ClipboardList },
-  { key: 'thesisValidation', title: 'Thesis Validation', icon: CheckCircle2 },
-  { key: 'sectorAndMacroView', title: 'Sector & Macro View', icon: Globe },
-  { key: 'catalystWatch', title: 'Catalyst Watch', icon: Zap },
-  { key: 'investmentSummary', title: 'Investment Summary', icon: FileText },
-] as const;
-
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);

@@ -1,6 +1,6 @@
 import type { AnalyzeStockOutput } from '@/ai/flows/analyze-stock';
 import { MarkdownRenderer } from '@/components/markdown-renderer';
-import { analysisSections } from '@/app/page';
+import { analysisSections } from '@/lib/constants';
 import React from 'react';
 
 interface PdfReportProps extends React.HTMLAttributes<HTMLDivElement> {
