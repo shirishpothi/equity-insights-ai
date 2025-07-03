@@ -1,8 +1,9 @@
 name: Deploy to Vercel
 
 on:
-  push:
-    branches: [ main ]
+  # Disabled - Use Vercel's automatic GitHub integration instead
+  # push:
+  #   branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -27,6 +28,7 @@ jobs:
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -34,3 +36,17 @@ jobs:
           vercel-args: '--prod'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Vercel deployment skipped
+        if: ${{ secrets.VERCEL_TOKEN == '' }}
+        run: |
+          echo "⚠️ Vercel deployment skipped - VERCEL_TOKEN secret not configured"
+          echo "To enable Vercel deployment via GitHub Actions:"
+          echo "1. Go to your GitHub repository settings"
+          echo "2. Navigate to Secrets and variables > Actions"
+          echo "3. Add the following secrets:"
+          echo "   - VERCEL_TOKEN: Your Vercel token"
+          echo "   - VERCEL_ORG_ID: Your Vercel organization ID"
+          echo "   - VERCEL_PROJECT_ID: Your Vercel project ID"
+          echo ""
+          echo "Alternatively, use Vercel's automatic GitHub integration for deployments."
