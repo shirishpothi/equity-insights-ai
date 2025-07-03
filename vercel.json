@@ -4,7 +4,7 @@
   "framework": "nextjs",
   "installCommand": "npm ci",
   "env": {
-    "GEMINI_API_KEY": "@gemini-api-key"
+    "GEMINI_API_KEY": "$GEMINI_API_KEY"
   },
   "functions": {
     "src/app/api/**/*.ts": {
