@@ -9,9 +9,18 @@ const formSchema = z.object({
   goal: z.string().min(5, 'Investment goal is required.'),
 });
 
+// Define the same type structure as the real actions.ts
+type AnalyzeStockOutput = {
+  fundamentalAnalysis: string;
+  thesisValidation: string;
+  sectorAndMacroView: string;
+  catalystWatch: string;
+  investmentSummary: string;
+};
+
 type AnalysisResult = {
   success: true;
-  data: Record<string, unknown>;
+  data: AnalyzeStockOutput;
 } | {
   success: false;
   error: string;
@@ -36,9 +45,15 @@ export async function handleStockAnalysis(
   };
 }
 
+// Define the same type structure as the real actions.ts
+type TickerSuggestionOutput = Array<{
+  ticker: string;
+  name: string;
+}>;
+
 type SuggestionResult = {
   success: true;
-  data: Array<Record<string, unknown>>;
+  data: TickerSuggestionOutput;
 } | {
   success: false;
   error: string;
