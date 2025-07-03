@@ -4,11 +4,6 @@
   "framework": "nextjs",
   "installCommand": "npm ci",
   "env": {
-    "GEMINI_API_KEY": "$GEMINI_API_KEY"
-  },
-  "functions": {
-    "src/app/api/**/*.ts": {
-      "runtime": "nodejs20.x"
-    }
+    "GEMINI_API_KEY": "@gemini_api_key"
   }
 }

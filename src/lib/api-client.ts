@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { AnalyzeStockOutput } from '@/ai/flows/analyze-stock';
 import type { TickerSuggestionOutput } from '@/ai/flows/suggest-tickers';
 
-const formSchema = z.object({
+export const formSchema = z.object({
   ticker: z.string().min(1, 'Ticker is required.'),
   investmentThesis: z.string().min(10, 'Investment thesis is required.'),
   goal: z.string().min(5, 'Investment goal is required.'),

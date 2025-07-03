@@ -13,7 +13,7 @@ export default function AuthCodeError() {
           </div>
           <CardTitle className="text-xl">Authentication Error</CardTitle>
           <CardDescription>
-            Sorry, we couldn't complete your sign-in process.
+            Sorry, we couldn&apos;t complete your sign-in process.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-4">

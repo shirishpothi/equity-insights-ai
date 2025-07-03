@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/auth-context'
+import { useState, useEffect, useCallback } from 'react'
+
 import { AuthGuard } from '@/components/auth/auth-guard'
 import { analysisHistoryService, type AnalysisHistoryItem } from '@/lib/analysis-history'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,12 +13,10 @@ import {
   ArrowLeft, 
   Search, 
   Calendar, 
-  TrendingUp, 
-  Eye, 
-  Trash2, 
+  Eye,
+  Trash2,
   LoaderCircle,
-  FileText,
-  AlertCircle
+  FileText
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
@@ -30,11 +28,7 @@ function AnalysisHistoryContent() {
   const [searchLoading, setSearchLoading] = useState(false)
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadAnalyses()
-  }, [])
-
-  const loadAnalyses = async () => {
+  const loadAnalyses = useCallback(async () => {
     setLoading(true)
     const result = await analysisHistoryService.getAnalysisHistory(50)
     
@@ -48,7 +42,11 @@ function AnalysisHistoryContent() {
       })
     }
     setLoading(false)
-  }
+  }, [toast])
+
+  useEffect(() => {
+    loadAnalyses()
+  }, [loadAnalyses])
 
   const handleSearch = async (query: string) => {
     if (!query.trim()) {

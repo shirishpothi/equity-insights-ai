@@ -110,7 +110,7 @@ export default function TestAuthPage() {
     }
   }
 
-  const TestResult = ({ test, label, icon: Icon }: { test: boolean | null, label: string, icon: any }) => (
+  const TestResult = ({ test, label, icon: Icon }: { test: boolean | null, label: string, icon: React.ComponentType<{ className?: string }> }) => (
     <div className="flex items-center justify-between p-3 border rounded-lg">
       <div className="flex items-center space-x-2">
         <Icon className="h-4 w-4" />

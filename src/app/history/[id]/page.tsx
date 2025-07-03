@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { AuthGuard } from '@/components/auth/auth-guard'
 import { analysisHistoryService, type AnalysisHistoryItem } from '@/lib/analysis-history'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
-import { MarkdownRenderer } from '@/components/markdown-renderer'
+
 import { PdfReport } from '@/components/pdf-report'
 import { 
   ArrowLeft, 
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { analysisSections } from '@/lib/constants'
+
 
 function AnalysisDetailContent() {
   const params = useParams()
@@ -31,13 +31,7 @@ function AnalysisDetailContent() {
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
   const { toast } = useToast()
 
-  useEffect(() => {
-    if (params.id) {
-      loadAnalysis(params.id as string)
-    }
-  }, [params.id])
-
-  const loadAnalysis = async (id: string) => {
+  const loadAnalysis = useCallback(async (id: string) => {
     setLoading(true)
     const result = await analysisHistoryService.getAnalysisById(id)
     
@@ -51,7 +45,13 @@ function AnalysisDetailContent() {
       })
     }
     setLoading(false)
-  }
+  }, [toast])
+
+  useEffect(() => {
+    if (params.id) {
+      loadAnalysis(params.id as string)
+    }
+  }, [params.id, loadAnalysis])
 
   const handleDelete = async () => {
     if (!analysis) return
@@ -153,7 +153,7 @@ function AnalysisDetailContent() {
             <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">Analysis Not Found</h3>
             <p className="text-muted-foreground mb-4">
-              The analysis you're looking for doesn't exist or you don't have permission to view it.
+              The analysis you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.
             </p>
             <Button asChild>
               <Link href="/history">

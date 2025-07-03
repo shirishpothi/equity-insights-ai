@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import type { AnalyzeStockOutput } from '@/ai/flows/analyze-stock'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -26,7 +27,7 @@ export interface Database {
           ticker: string
           investment_thesis: string
           investment_goal: string
-          analysis_result: any
+          analysis_result: AnalyzeStockOutput
           created_at: string
           updated_at: string
         }
@@ -36,7 +37,7 @@ export interface Database {
           ticker: string
           investment_thesis: string
           investment_goal: string
-          analysis_result: any
+          analysis_result: AnalyzeStockOutput
           created_at?: string
           updated_at?: string
         }
@@ -46,7 +47,7 @@ export interface Database {
           ticker?: string
           investment_thesis?: string
           investment_goal?: string
-          analysis_result?: any
+          analysis_result?: AnalyzeStockOutput
           created_at?: string
           updated_at?: string
         }
