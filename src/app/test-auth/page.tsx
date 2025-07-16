@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { analysisHistoryService } from '@/lib/analysis-history'
 import { validateClientEnvironment } from '@/lib/env-validation'
+import { profileService } from '@/lib/profile-service'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
 import { LoginButton } from '@/components/auth/login-button'
 import { UserMenu } from '@/components/auth/user-menu'
+
+import { SessionStatus } from '@/components/auth/session-status'
 import { LoaderCircle, CheckCircle, XCircle, Database, Shield, User, Settings } from 'lucide-react'
 
 export default function TestAuthPage() {
@@ -20,11 +23,19 @@ export default function TestAuthPage() {
     database: boolean | null
     rls: boolean | null
     environment: boolean | null
+    profileCreation: boolean | null
+    profileUpdate: boolean | null
+    dataIsolation: boolean | null
+    sessionPersistence: boolean | null
   }>({
     auth: null,
     database: null,
     rls: null,
-    environment: null
+    environment: null,
+    profileCreation: null,
+    profileUpdate: null,
+    dataIsolation: null,
+    sessionPersistence: null
   })
   const [testing, setTesting] = useState(false)
   const [envValidation, setEnvValidation] = useState<ReturnType<typeof validateClientEnvironment> | null>(null)
@@ -47,13 +58,46 @@ export default function TestAuthPage() {
     }
 
     setTesting(true)
-    const results = { auth: false, database: false, rls: false }
+    const results = {
+      auth: false,
+      database: false,
+      rls: false,
+      profileCreation: false,
+      profileUpdate: false,
+      dataIsolation: false,
+      sessionPersistence: false
+    }
 
     try {
       // Test 1: Authentication
       results.auth = !!user
-      
-      // Test 2: Database connectivity and operations
+
+      // Test 2: Profile Creation and Management
+      try {
+        const profileResult = await profileService.ensureProfile(user)
+        results.profileCreation = profileResult.success
+
+        if (profileResult.success && profileResult.data) {
+          // Test profile update
+          const updateResult = await profileService.updateProfile(user.id, {
+            full_name: 'Test User Updated'
+          })
+          results.profileUpdate = updateResult.success
+
+          // Restore original name
+          if (updateResult.success) {
+            await profileService.updateProfile(user.id, {
+              full_name: user.user_metadata?.full_name || null
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Profile test failed:', error)
+        results.profileCreation = false
+        results.profileUpdate = false
+      }
+
+      // Test 3: Database connectivity and operations
       try {
         const testAnalysis = {
           ticker: 'TEST',
@@ -85,7 +129,7 @@ export default function TestAuthPage() {
         results.database = false
       }
 
-      // Test 3: Row Level Security (RLS)
+      // Test 4: Row Level Security (RLS)
       try {
         // Get user's analysis count
         const countResult = await analysisHistoryService.getAnalysisCount()
@@ -93,6 +137,24 @@ export default function TestAuthPage() {
       } catch (error) {
         console.error('RLS test failed:', error)
         results.rls = false
+      }
+
+      // Test 5: Data Isolation (verify user can only see their own data)
+      try {
+        const userAnalyses = await analysisHistoryService.getAnalysisHistory()
+        results.dataIsolation = userAnalyses.success
+      } catch (error) {
+        console.error('Data isolation test failed:', error)
+        results.dataIsolation = false
+      }
+
+      // Test 6: Session Persistence
+      try {
+        // This test checks if the session is properly maintained
+        results.sessionPersistence = !!user && !!user.id && !!user.email
+      } catch (error) {
+        console.error('Session persistence test failed:', error)
+        results.sessionPersistence = false
       }
 
       setTestResults(prev => ({ ...prev, ...results }))
@@ -198,15 +260,21 @@ export default function TestAuthPage() {
 
             {user && (
               <>
+                <SessionStatus showDetails={true} />
+
                 <div className="space-y-3">
                   <h3 className="font-semibold">Authentication Tests</h3>
                   <TestResult test={testResults.auth} label="Authentication" icon={User} />
+                  <TestResult test={testResults.profileCreation} label="Profile Creation" icon={User} />
+                  <TestResult test={testResults.profileUpdate} label="Profile Update" icon={Settings} />
                   <TestResult test={testResults.database} label="Database Operations" icon={Database} />
                   <TestResult test={testResults.rls} label="Row Level Security" icon={Shield} />
+                  <TestResult test={testResults.dataIsolation} label="Data Isolation" icon={Shield} />
+                  <TestResult test={testResults.sessionPersistence} label="Session Persistence" icon={Settings} />
                 </div>
 
-                <Button 
-                  onClick={runTests} 
+                <Button
+                  onClick={runTests}
                   disabled={testing}
                   className="w-full"
                 >

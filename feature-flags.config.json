@@ -1,0 +1,83 @@
+{
+  "environment": "development",
+  "defaultEnabled": false,
+  "logUsage": true,
+  "flags": {
+    "FEATURE_AUTH_GOOGLE_OAUTH": {
+      "key": "FEATURE_AUTH_GOOGLE_OAUTH",
+      "name": "Google OAuth Authentication",
+      "description": "Enable Google OAuth login functionality",
+      "type": "boolean",
+      "enabled": true,
+      "environment": ["development", "staging", "production"]
+    },
+    "FEATURE_AUTH_SUPABASE_INTEGRATION": {
+      "key": "FEATURE_AUTH_SUPABASE_INTEGRATION",
+      "name": "Supabase Integration",
+      "description": "Enable Supabase authentication and database integration",
+      "type": "boolean",
+      "enabled": true,
+      "environment": ["development", "staging", "production"]
+    },
+    "FEATURE_AI_STOCK_ANALYSIS": {
+      "key": "FEATURE_AI_STOCK_ANALYSIS",
+      "name": "AI Stock Analysis",
+      "description": "Enable AI-powered stock analysis functionality",
+      "type": "boolean",
+      "enabled": true,
+      "environment": ["development", "staging", "production"]
+    },
+    "FEATURE_AI_TICKER_SUGGESTIONS": {
+      "key": "FEATURE_AI_TICKER_SUGGESTIONS",
+      "name": "AI Ticker Suggestions",
+      "description": "Enable AI-powered ticker symbol suggestions",
+      "type": "boolean",
+      "enabled": true,
+      "environment": ["development", "staging", "production"]
+    },
+    "FEATURE_AI_ADVANCED_ANALYTICS": {
+      "key": "FEATURE_AI_ADVANCED_ANALYTICS",
+      "name": "Advanced Analytics",
+      "description": "Enable advanced AI analytics features",
+      "type": "percentage",
+      "enabled": true,
+      "percentage": 25,
+      "seed": "advanced-analytics-v1",
+      "environment": ["staging", "production"]
+    },
+    "FEATURE_UI_ANALYSIS_HISTORY": {
+      "key": "FEATURE_UI_ANALYSIS_HISTORY",
+      "name": "Analysis History",
+      "description": "Enable analysis history functionality",
+      "type": "boolean",
+      "enabled": true,
+      "environment": ["development", "staging", "production"]
+    },
+    "FEATURE_UI_PDF_EXPORT": {
+      "key": "FEATURE_UI_PDF_EXPORT",
+      "name": "PDF Export",
+      "description": "Enable PDF export functionality for analysis reports",
+      "type": "boolean",
+      "enabled": true,
+      "environment": ["development", "staging", "production"]
+    },
+    "FEATURE_DATA_GEMINI_API": {
+      "key": "FEATURE_DATA_GEMINI_API",
+      "name": "Gemini API Integration",
+      "description": "Enable Google Gemini AI API integration",
+      "type": "boolean",
+      "enabled": true,
+      "environment": ["development", "staging", "production"]
+    },
+    "FEATURE_ADMIN_FEATURE_FLAG_MANAGEMENT": {
+      "key": "FEATURE_ADMIN_FEATURE_FLAG_MANAGEMENT",
+      "name": "Feature Flag Management",
+      "description": "Enable admin interface for managing feature flags",
+      "type": "user_specific",
+      "enabled": true,
+      "userEmails": ["<ADMIN_EMAIL>"],
+      "userIds": [],
+      "environment": ["development", "staging", "production"]
+    }
+  }
+}

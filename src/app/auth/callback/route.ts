@@ -53,18 +53,25 @@ export async function GET(request: NextRequest) {
           email: data.user?.email,
         })
 
-        // Determine the correct redirect URL
+        // Determine the correct redirect URL with better environment handling
         const forwardedHost = request.headers.get('x-forwarded-host')
         const forwardedProto = request.headers.get('x-forwarded-proto') || 'https'
         const isLocalEnv = process.env.NODE_ENV === 'development'
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL
 
         let redirectUrl: string
 
         if (isLocalEnv) {
-          redirectUrl = `${origin}${next}`
+          // Development environment - use localhost
+          redirectUrl = appUrl ? `${appUrl}${next}` : `${origin}${next}`
         } else if (forwardedHost) {
+          // Production with forwarded headers (Vercel, Netlify, etc.)
           redirectUrl = `${forwardedProto}://${forwardedHost}${next}`
+        } else if (appUrl) {
+          // Production with explicit app URL
+          redirectUrl = `${appUrl}${next}`
         } else {
+          // Fallback to origin
           redirectUrl = `${origin}${next}`
         }
 

@@ -18,7 +18,7 @@ import Link from 'next/link'
 
 export function UserMenu() {
   const [isLoading, setIsLoading] = useState(false)
-  const { user, signOut } = useAuth()
+  const { user, signOut, clearError } = useAuth()
   const { toast } = useToast()
 
   if (!user) return null
@@ -26,6 +26,7 @@ export function UserMenu() {
   const handleSignOut = async () => {
     try {
       setIsLoading(true)
+      clearError() // Clear any previous errors
       await signOut()
       toast({
         title: 'Signed out',
@@ -33,9 +34,10 @@ export function UserMenu() {
       })
     } catch (error) {
       console.error('Sign out error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
       toast({
         title: 'Sign Out Failed',
-        description: 'There was an error signing out. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       })
     } finally {

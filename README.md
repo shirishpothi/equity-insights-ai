@@ -26,6 +26,7 @@
 - **📋 Copy to Clipboard**: Easy sharing of analysis results
 - **🎨 Modern UI**: Beautiful, responsive interface with dark theme and smooth animations
 - **⚡ Fast Performance**: Built with Next.js 15 and optimized for speed
+- **🚩 Feature Flag System**: Dynamic feature management with admin controls and A/B testing capabilities
 
 ## 🚀 Quick Start
 
@@ -215,6 +216,63 @@ This application uses **Supabase** for authentication and data storage, providin
 4. **Database Setup**: The required tables and security policies are automatically configured
 
 For detailed authentication setup instructions, see [AUTHENTICATION.md](./AUTHENTICATION.md).
+
+## 🚩 Feature Flag System
+
+The application includes a comprehensive feature flag system that allows for:
+
+- **Dynamic Feature Control**: Enable/disable features without code deployments
+- **A/B Testing**: Test different implementations with percentage-based rollouts
+- **User-Specific Features**: Target features to specific users or groups
+- **Environment Management**: Different flag configurations per environment
+- **Admin Interface**: Web-based interface for managing flags
+- **Usage Analytics**: Monitor feature usage and performance
+
+### Quick Start with Feature Flags
+
+```tsx
+import { useFeatureFlag, FEATURE_FLAGS } from '@/lib/feature-flags';
+
+function MyComponent() {
+  const isNewFeatureEnabled = useFeatureFlag(FEATURE_FLAGS.MY_NEW_FEATURE);
+
+  return (
+    <div>
+      {isNewFeatureEnabled ? <NewFeature /> : <OldFeature />}
+    </div>
+  );
+}
+```
+
+### Configuration
+
+Set feature flags in your `.env.local`:
+
+```bash
+# Boolean flags
+FEATURE_AI_STOCK_ANALYSIS=true
+FEATURE_UI_PDF_EXPORT=false
+
+# Percentage rollouts
+FEATURE_NEW_ALGORITHM=25%
+
+# User-specific flags
+FEATURE_ADMIN_PANEL=admin@company.com,user123
+```
+
+### Documentation
+
+- **[Feature Flags Documentation](./FEATURE_FLAGS.md)**: Complete guide to the feature flag system
+- **[Quick Start Guide](./docs/feature-flags-quick-start.md)**: Get started in 5 minutes
+- **[Patterns & Recipes](./docs/feature-flags-patterns.md)**: Common patterns and best practices
+
+### Admin Interface
+
+Access the feature flag admin interface at `/admin/feature-flags` (requires admin permissions) to:
+- View all feature flags and their status
+- Toggle boolean flags
+- Monitor usage statistics
+- Search and filter flags
 
 ## 🤝 Contributing
 

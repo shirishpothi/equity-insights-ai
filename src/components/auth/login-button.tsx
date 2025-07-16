@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
 import { useToast } from '@/hooks/use-toast'
 import { LoaderCircle } from 'lucide-react'
+import { useFeatureFlag, FEATURE_FLAGS } from '@/lib/feature-flags'
 
 interface LoginButtonProps {
   className?: string
@@ -14,23 +15,62 @@ interface LoginButtonProps {
 
 export function LoginButton({ className, variant = 'default', size = 'default' }: LoginButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const { signInWithGoogle } = useAuth()
+  const { signInWithGoogle, clearError } = useAuth()
   const { toast } = useToast()
 
+  // Check if Google OAuth is enabled
+  const isGoogleOAuthEnabled = useFeatureFlag(FEATURE_FLAGS.AUTH_GOOGLE_OAUTH)
+  const isSupabaseEnabled = useFeatureFlag(FEATURE_FLAGS.AUTH_SUPABASE_INTEGRATION)
+
   const handleSignIn = async () => {
+    // Check feature flags before attempting sign in
+    if (!isGoogleOAuthEnabled) {
+      toast({
+        title: 'Sign In Unavailable',
+        description: 'Google OAuth authentication is currently disabled.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (!isSupabaseEnabled) {
+      toast({
+        title: 'Sign In Unavailable',
+        description: 'Authentication service is currently unavailable.',
+        variant: 'destructive',
+      })
+      return
+    }
+
     try {
       setIsLoading(true)
+      clearError() // Clear any previous errors
       await signInWithGoogle()
     } catch (error) {
       console.error('Sign in error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
       toast({
         title: 'Sign In Failed',
-        description: 'There was an error signing in. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       })
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Don't render the button if authentication features are disabled
+  if (!isGoogleOAuthEnabled || !isSupabaseEnabled) {
+    return (
+      <Button
+        disabled
+        className={className}
+        variant="outline"
+        size={size}
+      >
+        Sign In Unavailable
+      </Button>
+    )
   }
 
   return (

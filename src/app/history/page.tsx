@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 
 import { AuthGuard } from '@/components/auth/auth-guard'
 import { analysisHistoryService, type AnalysisHistoryItem } from '@/lib/analysis-history'
+import { useFeatureFlag, FEATURE_FLAGS } from '@/lib/feature-flags'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,6 +28,9 @@ function AnalysisHistoryContent() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
   const { toast } = useToast()
+
+  // Check if analysis history feature is enabled
+  const isAnalysisHistoryEnabled = useFeatureFlag(FEATURE_FLAGS.UI_ANALYSIS_HISTORY)
 
   const loadAnalyses = useCallback(async () => {
     setLoading(true)
@@ -93,6 +97,34 @@ function AnalysisHistoryContent() {
         <div className="text-center">
           <LoaderCircle className="h-8 w-8 animate-spin mx-auto mb-4" />
           <p className="text-muted-foreground">Loading your analysis history...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // If analysis history is disabled, show message
+  if (!isAnalysisHistoryEnabled) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <div className="mb-6">
+            <Button variant="ghost" asChild className="mb-4">
+              <Link href="/">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Home
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold">Analysis History</h1>
+          </div>
+          <Card>
+            <CardContent className="p-8 text-center">
+              <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Analysis History Unavailable</h3>
+              <p className="text-muted-foreground">
+                The analysis history feature is currently disabled.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     )
