@@ -14,8 +14,8 @@ import { getCurrentEnvironment } from './config';
 
 export interface FeatureFlagChangeLog {
   flagKey: string;
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   changedBy?: string;
   changeReason?: string;
   environment: FeatureFlagEnvironment;
@@ -34,7 +34,7 @@ export interface FeatureFlagErrorLog {
   flagKey: string;
   error: string;
   stackTrace?: string;
-  context?: any;
+  context?: Record<string, unknown>;
   environment: FeatureFlagEnvironment;
   timestamp: Date;
 }
@@ -253,20 +253,34 @@ export class FeatureFlagLogger {
       flagPerformance: Record<string, { avg: number; max: number; count: number }>;
     };
   } {
+    const usageStats = this.getUsageStats();
+    const perfStats = this.getPerformanceStats();
+
     return {
       usage: this.getUsageLogs(),
       changes: this.getChangeLogs(),
       performance: this.getPerformanceLogs(),
       errors: this.getErrorLogs(),
-      stats: this.getUsageStats(),
-      performanceStats: this.getPerformanceStats(),
+      stats: {
+        totalEvaluations: usageStats.totalEvaluations,
+        enabledCount: usageStats.enabledCount,
+        disabledCount: usageStats.disabledCount,
+        flagUsage: usageStats.flagUsage,
+        recentActivity: usageStats.recentActivity,
+      },
+      performanceStats: {
+        averageEvaluationTime: perfStats.averageEvaluationTime,
+        slowEvaluations: perfStats.slowEvaluations,
+        cacheHitRate: perfStats.cacheHitRate,
+        flagPerformance: perfStats.flagPerformance,
+      },
     };
   }
 
   /**
    * Trim logs to prevent memory issues
    */
-  private trimLogs(logs: any[]): void {
+  private trimLogs(logs: unknown[]): void {
     if (logs.length > this.maxLogSize) {
       logs.splice(0, logs.length - this.maxLogSize);
     }
@@ -275,7 +289,7 @@ export class FeatureFlagLogger {
   /**
    * Send logs to external logging service
    */
-  private sendToExternalLogger(type: string, log: any): void {
+  private sendToExternalLogger(type: string, log: unknown): void {
     // In a real implementation, you would send logs to services like:
     // - DataDog
     // - New Relic
@@ -329,8 +343,8 @@ export function logFeatureFlagUsage(
  */
 export function logFeatureFlagChange(
   flagKey: string,
-  oldValue: any,
-  newValue: any,
+  oldValue: unknown,
+  newValue: unknown,
   changedBy?: string,
   changeReason?: string
 ): void {

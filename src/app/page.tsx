@@ -47,7 +47,7 @@ import { analysisSections } from '@/lib/constants';
 import { useAuth } from '@/contexts/auth-context';
 import { LoginButton } from '@/components/auth/login-button';
 import { useFeatureFlags, FEATURE_FLAGS } from '@/lib/feature-flags';
-import { UserMenu } from '@/components/auth/user-menu';
+
 import { AuthStatus } from '@/components/auth/auth-status';
 import { analysisHistoryService } from '@/lib/analysis-history';
 import Link from 'next/link';
@@ -69,7 +69,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [authPrompt, setAuthPrompt] = useState(false);
   const { toast } = useToast();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
 
   // Feature flags
   const featureFlags = useFeatureFlags([

@@ -27,33 +27,37 @@ describe('Feature Flag Configuration', () => {
 
     afterEach(() => {
       // Restore original NODE_ENV
-      (process.env as any).NODE_ENV = originalNodeEnv;
+      if (originalNodeEnv !== undefined) {
+        Object.defineProperty(process.env, 'NODE_ENV', { value: originalNodeEnv, configurable: true });
+      } else {
+        Object.defineProperty(process.env, 'NODE_ENV', { value: undefined, configurable: true });
+      }
     });
 
     it('should return development by default', () => {
-      delete (process.env as any).NODE_ENV;
+      Object.defineProperty(process.env, 'NODE_ENV', { value: undefined, configurable: true });
       expect(getCurrentEnvironment()).toBe('development');
     });
 
     it('should return production when NODE_ENV is production', () => {
-      (process.env as any).NODE_ENV = 'production';
+      Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', configurable: true });
       expect(getCurrentEnvironment()).toBe('production');
     });
 
     it('should return staging when NODE_ENV is staging', () => {
-      (process.env as any).NODE_ENV = 'staging';
+      Object.defineProperty(process.env, 'NODE_ENV', { value: 'staging', configurable: true });
       expect(getCurrentEnvironment()).toBe('staging');
     });
 
     it('should return development for unknown NODE_ENV', () => {
-      (process.env as any).NODE_ENV = 'unknown';
+      Object.defineProperty(process.env, 'NODE_ENV', { value: 'unknown', configurable: true });
       expect(getCurrentEnvironment()).toBe('development');
     });
   });
 
   describe('areFeatureFlagsEnabled', () => {
     it('should return true by default', () => {
-      delete process.env.FEATURE_FLAGS_ENABLED;
+      process.env.FEATURE_FLAGS_ENABLED = undefined;
       expect(areFeatureFlagsEnabled()).toBe(true);
     });
 
@@ -97,7 +101,7 @@ describe('Feature Flag Configuration', () => {
       const flag = config.flags[FEATURE_FLAGS.AI_STOCK_ANALYSIS];
       expect(flag).toBeDefined();
       expect(flag.type).toBe('boolean');
-      expect((flag as any).value).toBe(true);
+      expect((flag as { value: boolean }).value).toBe(true);
     });
 
     it('should load percentage flags from environment', () => {
@@ -107,7 +111,7 @@ describe('Feature Flag Configuration', () => {
       const flag = config.flags[FEATURE_FLAGS.AI_ADVANCED_ANALYTICS];
       expect(flag).toBeDefined();
       expect(flag.type).toBe('percentage');
-      expect((flag as any).percentage).toBe(75);
+      expect((flag as { percentage: number }).percentage).toBe(75);
     });
 
     it('should load user-specific flags from environment', () => {
@@ -117,9 +121,9 @@ describe('Feature Flag Configuration', () => {
       const flag = config.flags[FEATURE_FLAGS.ADMIN_FEATURE_FLAG_MANAGEMENT];
       expect(flag).toBeDefined();
       expect(flag.type).toBe('user_specific');
-      expect((flag as any).userIds).toContain('user1');
-      expect((flag as any).userIds).toContain('user2');
-      expect((flag as any).userEmails).toContain('admin@test.com');
+      expect((flag as { userIds: string[] }).userIds).toContain('user1');
+      expect((flag as { userIds: string[] }).userIds).toContain('user2');
+      expect((flag as { userEmails: string[] }).userEmails).toContain('admin@test.com');
     });
 
     it('should load JSON configuration from environment', () => {
@@ -134,7 +138,7 @@ describe('Feature Flag Configuration', () => {
 
       // Clear module cache to ensure fresh load
       jest.resetModules();
-      const { loadFeatureFlagConfig } = require('../config');
+      const { loadFeatureFlagConfig } = require('../config') as { loadFeatureFlagConfig: () => any };
 
       const config = loadFeatureFlagConfig();
       const flag = config.flags[FEATURE_FLAGS.UI_PDF_EXPORT];
@@ -142,7 +146,7 @@ describe('Feature Flag Configuration', () => {
       expect(flag).toBeDefined();
       expect(flag.name).toBe('Custom Flag');
       expect(flag.description).toBe('Custom description');
-      expect((flag as any).value).toBe(false);
+      expect((flag as { value: boolean }).value).toBe(false);
     });
 
     it('should handle invalid JSON gracefully', () => {
@@ -163,7 +167,7 @@ describe('Feature Flag Configuration', () => {
       const flag = config.flags.FEATURE_CUSTOM_TEST_FLAG;
       expect(flag).toBeDefined();
       expect(flag.type).toBe('boolean');
-      expect((flag as any).value).toBe(true);
+      expect((flag as { value: boolean }).value).toBe(true);
     });
   });
 
@@ -189,7 +193,7 @@ describe('Feature Flag Configuration', () => {
       
       const flag = config.flags[FEATURE_FLAGS.AI_ADVANCED_ANALYTICS];
       expect(flag.type).toBe('percentage');
-      expect((flag as any).percentage).toBe(50);
+      expect((flag as { percentage: number }).percentage).toBe(50);
     });
 
     it('should reject invalid percentage values', () => {
@@ -210,8 +214,8 @@ describe('Feature Flag Configuration', () => {
       
       const flag = config.flags[FEATURE_FLAGS.ADMIN_FEATURE_FLAG_MANAGEMENT];
       expect(flag.type).toBe('user_specific');
-      expect((flag as any).userIds).toEqual(['user123', 'user456']);
-      expect((flag as any).userEmails).toEqual(['admin@test.com', 'support@test.com']);
+      expect((flag as { userIds: string[] }).userIds).toEqual(['user123', 'user456']);
+      expect((flag as { userEmails: string[] }).userEmails).toEqual(['admin@test.com', 'support@test.com']);
     });
 
     it('should handle empty environment values', () => {
@@ -244,7 +248,7 @@ describe('Feature Flag Configuration', () => {
       
       expect(flag.type).toBe('boolean');
       expect(flag.enabled).toBe(true);
-      expect((flag as any).value).toBe(true);
+      expect((flag as { value: boolean }).value).toBe(true);
       expect(flag.environment).toContain('development');
       expect(flag.environment).toContain('production');
     });
@@ -259,7 +263,7 @@ describe('Feature Flag Configuration', () => {
       const flag = config.flags[FEATURE_FLAGS.AUTH_GOOGLE_OAUTH];
       
       expect(flag.type).toBe('boolean');
-      expect((flag as any).value).toBe(false);
+      expect((flag as { value: boolean }).value).toBe(false);
     });
   });
 });

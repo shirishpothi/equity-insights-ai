@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getFeatureFlagService, isFeatureEnabled, FEATURE_FLAGS } from '@/lib/feature-flags';
 import { createClient } from '@/lib/supabase-server';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check if user has admin access
     const supabase = await createClient();
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     const service = getFeatureFlagService();
 
     switch (action) {
-      case 'toggle':
+      case 'toggle': {
         const toggleSuccess = service.toggleFlag(flagKey);
         if (toggleSuccess) {
           return NextResponse.json({
@@ -92,8 +92,9 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+      }
 
-      case 'update':
+      case 'update': {
         const updateSuccess = service.updateFlag(flagKey, updates);
         if (updateSuccess) {
           return NextResponse.json({
@@ -106,8 +107,9 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+      }
 
-      case 'setPercentage':
+      case 'setPercentage': {
         const { percentage } = body;
         const percentageSuccess = service.setFlagPercentage(flagKey, percentage);
         if (percentageSuccess) {
@@ -121,8 +123,9 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+      }
 
-      case 'addUser':
+      case 'addUser': {
         const { userId, userEmail } = body;
         const addUserSuccess = service.addUserToFlag(flagKey, userId, userEmail);
         if (addUserSuccess) {
@@ -136,8 +139,9 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+      }
 
-      case 'removeUser':
+      case 'removeUser': {
         const { userId: removeUserId, userEmail: removeUserEmail } = body;
         const removeUserSuccess = service.removeUserFromFlag(flagKey, removeUserId, removeUserEmail);
         if (removeUserSuccess) {
@@ -151,13 +155,15 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+      }
 
-      case 'refresh':
+      case 'refresh': {
         service.refreshConfig();
         return NextResponse.json({
           success: true,
           message: 'Configuration refreshed successfully'
         });
+      }
 
       default:
         return NextResponse.json(

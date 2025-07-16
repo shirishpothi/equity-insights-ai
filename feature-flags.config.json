@@ -9,7 +9,6 @@
       "description": "Enable Google OAuth login functionality",
       "type": "boolean",
       "enabled": true,
-      "value": true,
       "environment": ["development", "staging", "production"]
     },
     "FEATURE_AUTH_SUPABASE_INTEGRATION": {
@@ -18,7 +17,6 @@
       "description": "Enable Supabase authentication and database integration",
       "type": "boolean",
       "enabled": true,
-      "value": true,
       "environment": ["development", "staging", "production"]
     },
     "FEATURE_AI_STOCK_ANALYSIS": {
@@ -27,7 +25,6 @@
       "description": "Enable AI-powered stock analysis functionality",
       "type": "boolean",
       "enabled": true,
-      "value": true,
       "environment": ["development", "staging", "production"]
     },
     "FEATURE_AI_TICKER_SUGGESTIONS": {
@@ -36,7 +33,6 @@
       "description": "Enable AI-powered ticker symbol suggestions",
       "type": "boolean",
       "enabled": true,
-      "value": true,
       "environment": ["development", "staging", "production"]
     },
     "FEATURE_AI_ADVANCED_ANALYTICS": {
@@ -55,7 +51,6 @@
       "description": "Enable analysis history functionality",
       "type": "boolean",
       "enabled": true,
-      "value": true,
       "environment": ["development", "staging", "production"]
     },
     "FEATURE_UI_PDF_EXPORT": {
@@ -64,7 +59,6 @@
       "description": "Enable PDF export functionality for analysis reports",
       "type": "boolean",
       "enabled": true,
-      "value": true,
       "environment": ["development", "staging", "production"]
     },
     "FEATURE_DATA_GEMINI_API": {
@@ -73,7 +67,6 @@
       "description": "Enable Google Gemini AI API integration",
       "type": "boolean",
       "enabled": true,
-      "value": true,
       "environment": ["development", "staging", "production"]
     },
     "FEATURE_ADMIN_FEATURE_FLAG_MANAGEMENT": {
@@ -82,7 +75,7 @@
       "description": "Enable admin interface for managing feature flags",
       "type": "user_specific",
       "enabled": true,
-      "userEmails": ["admin@example.com"],
+      "userEmails": ["<ADMIN_EMAIL>"],
       "userIds": [],
       "environment": ["development", "staging", "production"]
     }

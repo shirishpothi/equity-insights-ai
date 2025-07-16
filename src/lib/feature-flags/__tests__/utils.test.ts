@@ -244,7 +244,7 @@ describe('Feature Flag Utilities', () => {
         expires_in: 3600,
         expires_at: Date.now() / 1000 + 3600,
         token_type: 'bearer',
-        user: null as any,
+        user: { id: 'user1', email: 'test@example.com' } as any,
       };
 
       const mockSession2 = {
@@ -253,7 +253,7 @@ describe('Feature Flag Utilities', () => {
         expires_in: 3600,
         expires_at: Date.now() / 1000 + 3600,
         token_type: 'bearer',
-        user: null as any,
+        user: { id: 'user1', email: 'test@example.com' } as any,
       };
 
       const context1 = createFeatureFlagContext(null, mockSession1);
@@ -269,7 +269,7 @@ describe('Feature Flag Utilities', () => {
         expires_in: 3600,
         expires_at: Date.now() / 1000 + 3600,
         token_type: 'bearer',
-        user: null as any,
+        user: { id: 'user1', email: 'test1@example.com' } as any,
       };
 
       const mockSession2 = {
@@ -278,7 +278,7 @@ describe('Feature Flag Utilities', () => {
         expires_in: 3600,
         expires_at: Date.now() / 1000 + 3600,
         token_type: 'bearer',
-        user: null as any,
+        user: { id: 'user2', email: 'test2@example.com' } as any,
       };
 
       const context1 = createFeatureFlagContext(null, mockSession1);

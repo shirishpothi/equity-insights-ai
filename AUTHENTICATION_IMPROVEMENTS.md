@@ -8,7 +8,7 @@ This document summarizes all the improvements made to the Equity Insights AI aut
 **Problem**: The original Supabase project was INACTIVE, causing all authentication and database operations to fail.
 
 **Solution**:
-- Created a new active Supabase project (`cgqpqlmpywtbanztanvy`)
+- Created a new active Supabase project (`<SUPABASE_PROJECT_ID>`)
 - Updated all environment variables and configuration files
 - Migrated to the new project with proper API keys
 
@@ -194,7 +194,7 @@ CREATE TABLE public.analysis_history (
 ### 2. Environment Variables
 Ensure these are set in `.env.local`:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://cgqpqlmpywtbanztanvy.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://<SUPABASE_PROJECT_ID>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 NEXT_PUBLIC_APP_URL=http://localhost:9002

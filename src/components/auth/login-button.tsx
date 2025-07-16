@@ -15,7 +15,7 @@ interface LoginButtonProps {
 
 export function LoginButton({ className, variant = 'default', size = 'default' }: LoginButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const { signInWithGoogle, error, clearError } = useAuth()
+  const { signInWithGoogle, clearError } = useAuth()
   const { toast } = useToast()
 
   // Check if Google OAuth is enabled

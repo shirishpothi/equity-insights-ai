@@ -131,7 +131,7 @@ function loadFlagsFromEnvironment(): Record<string, FeatureFlag> {
 
   // Load any additional feature flags that start with FEATURE_
   Object.keys(process.env).forEach(envKey => {
-    if (envKey.startsWith('FEATURE_') && !Object.values(FEATURE_FLAGS).includes(envKey as any)) {
+    if (envKey.startsWith('FEATURE_') && !(Object.values(FEATURE_FLAGS) as string[]).includes(envKey)) {
       const flag = parseEnvFlag(envKey, process.env[envKey]);
       if (flag) {
         flags[envKey] = flag;

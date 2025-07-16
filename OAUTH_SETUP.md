@@ -22,12 +22,12 @@ This guide walks you through setting up Google OAuth authentication for the Equi
 
    **For Development:**
    ```
-   https://cgqpqlmpywtbanztanvy.supabase.co/auth/v1/callback
+   https://<YOUR_SUPABASE_PROJECT_ID>.supabase.co/auth/v1/callback
    ```
 
    **For Production (replace with your domain):**
    ```
-   https://cgqpqlmpywtbanztanvy.supabase.co/auth/v1/callback
+   https://your-production-domain.com/auth/callback
    ```
 
 8. Click **Create** and save your **Client ID** and **Client Secret**
@@ -83,8 +83,6 @@ This guide walks you through setting up Google OAuth authentication for the Equi
    **Production:**
    ```
    https://your-production-domain.com/**
-   http://localhost:9002/**
-   http://localhost:3000/**
    ```
 
 4. Click **Save**

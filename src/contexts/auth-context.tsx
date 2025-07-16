@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe()
       sessionManager.cleanup()
     }
-  }, [supabase.auth])
+  }, [supabase.auth, getInitialSession])
 
   const signInWithGoogle = async () => {
     try {

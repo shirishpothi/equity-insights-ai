@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { 
   getFeatureFlagService, 
@@ -18,12 +18,10 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
-import { 
-  ArrowLeft, 
-  Settings, 
-  Shield, 
-  Info,
-  Save,
+import {
+  ArrowLeft,
+  Settings,
+  Shield,
   RefreshCw,
   AlertTriangle
 } from 'lucide-react'
@@ -43,7 +41,7 @@ export default function FeatureFlagsAdminPage() {
   const service = getFeatureFlagService()
 
   // Filter flags based on search query
-  const filteredFlags: [string, FeatureFlagResult][] = Object.entries(allFlags).filter(([key, result]) => {
+  const filteredFlags: [string, FeatureFlagResult][] = Object.entries(allFlags).filter(([key]) => {
     const searchLower = searchQuery.toLowerCase()
     return (
       key.toLowerCase().includes(searchLower) ||
@@ -80,7 +78,7 @@ export default function FeatureFlagsAdminPage() {
           variant: 'destructive',
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'An error occurred while updating the flag.',
@@ -125,7 +123,7 @@ export default function FeatureFlagsAdminPage() {
             <Shield className="h-4 w-4" />
             <AlertTitle>Access Denied</AlertTitle>
             <AlertDescription>
-              You don't have permission to access the feature flag management interface.
+              You don&apos;t have permission to access the feature flag management interface.
             </AlertDescription>
           </Alert>
         </div>
@@ -266,7 +264,7 @@ function FlagItem({ flagKey, result, onToggle, loading }: FlagItemProps) {
         </p>
         {flag?.type === 'percentage' && (
           <p className="text-xs text-muted-foreground">
-            Percentage: {(flag as any).percentage}%
+            Percentage: {(flag as { percentage: number }).percentage}%
           </p>
         )}
       </div>

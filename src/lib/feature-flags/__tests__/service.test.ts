@@ -4,7 +4,7 @@
 
 import { FeatureFlagService } from '../service';
 import { FEATURE_FLAGS, type BooleanFeatureFlag, type PercentageFeatureFlag, type UserSpecificFeatureFlag } from '../types';
-import { getCurrentEnvironment } from '../config';
+
 
 // Mock the config module
 jest.mock('../config', () => ({
@@ -236,7 +236,6 @@ describe('FeatureFlagService', () => {
   describe('Error Handling', () => {
     it('should handle errors gracefully in updateFlag', () => {
       // Force an error by passing invalid data
-      const originalFlag = service.getFlagConfig(FEATURE_FLAGS.AI_STOCK_ANALYSIS);
       
       // Mock console.error to avoid noise in tests
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();

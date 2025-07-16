@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import React from 'react';
+
 import { renderHook } from '@testing-library/react';
 import { useFeatureFlag, useFeatureFlags, useFeatureFlagResult } from '../hooks';
 import { FEATURE_FLAGS } from '../types';
@@ -243,7 +243,7 @@ describe('Feature Flag Hooks', () => {
         }
       );
 
-      const firstResult = result.current;
+
 
       // Change user
       const newUser = {

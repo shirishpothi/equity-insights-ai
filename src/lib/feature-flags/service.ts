@@ -149,13 +149,14 @@ export class FeatureFlagService {
     let reason = '';
 
     switch (flag.type) {
-      case 'boolean':
+      case 'boolean': {
         const boolFlag = flag as BooleanFeatureFlag;
         enabled = boolFlag.value;
         reason = `Boolean flag value: ${enabled}`;
         break;
+      }
 
-      case 'percentage':
+      case 'percentage': {
         const percentFlag = flag as PercentageFeatureFlag;
         enabled = isUserInPercentageRollout(
           fullContext.userId,
@@ -165,14 +166,16 @@ export class FeatureFlagService {
         );
         reason = `Percentage rollout (${percentFlag.percentage}%): ${enabled}`;
         break;
+      }
 
-      case 'user_specific':
+      case 'user_specific': {
         const userFlag = flag as UserSpecificFeatureFlag;
         const userInList = fullContext.userId && userFlag.userIds.includes(fullContext.userId);
         const emailInList = fullContext.userEmail && userFlag.userEmails?.includes(fullContext.userEmail);
         enabled = !!(userInList || emailInList);
         reason = `User-specific flag: ${enabled}`;
         break;
+      }
 
       default:
         enabled = this.config.defaultEnabled;

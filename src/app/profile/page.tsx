@@ -25,12 +25,6 @@ function ProfileContent() {
     avatar_url: ''
   })
 
-  useEffect(() => {
-    if (user) {
-      loadProfile()
-    }
-  }, [user])
-
   const loadProfile = async () => {
     if (!user) return
 
@@ -52,6 +46,12 @@ function ProfileContent() {
       })
     }
   }
+
+  useEffect(() => {
+    if (user) {
+      loadProfile()
+    }
+  }, [user, loadProfile])
 
   const handleSaveProfile = async () => {
     if (!user) return

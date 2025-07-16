@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
 import { LoginButton } from '@/components/auth/login-button'
 import { UserMenu } from '@/components/auth/user-menu'
-import { AuthStatus } from '@/components/auth/auth-status'
+
 import { SessionStatus } from '@/components/auth/session-status'
 import { LoaderCircle, CheckCircle, XCircle, Database, Shield, User, Settings } from 'lucide-react'
 
