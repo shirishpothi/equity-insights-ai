@@ -240,18 +240,17 @@ export class FeatureFlagLogger {
     performance: FeatureFlagPerformanceLog[];
     errors: FeatureFlagErrorLog[];
     stats: {
-      totalUsage: number;
-      uniqueUsers: number;
-      uniqueFlags: number;
+      totalEvaluations: number;
       enabledCount: number;
       disabledCount: number;
       flagUsage: Record<string, number>;
+      recentActivity: FeatureFlagUsageLog[];
     };
     performanceStats: {
       averageEvaluationTime: number;
-      slowestFlag: string | null;
-      fastestFlag: string | null;
-      totalEvaluations: number;
+      slowEvaluations: number;
+      cacheHitRate: number;
+      flagPerformance: Record<string, { avg: number; max: number; count: number }>;
     };
   } {
     return {

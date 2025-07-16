@@ -141,7 +141,7 @@ export default function TestAuthPage() {
 
       // Test 5: Data Isolation (verify user can only see their own data)
       try {
-        const userAnalyses = await analysisHistoryService.getUserAnalyses()
+        const userAnalyses = await analysisHistoryService.getAnalysisHistory()
         results.dataIsolation = userAnalyses.success
       } catch (error) {
         console.error('Data isolation test failed:', error)
