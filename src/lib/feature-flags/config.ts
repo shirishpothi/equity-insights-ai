@@ -22,6 +22,7 @@ export function getCurrentEnvironment(): FeatureFlagEnvironment {
   const env = process.env.NODE_ENV || 'development';
   if (env === 'production') return 'production';
   if (env === 'staging') return 'staging';
+  // Treat 'test' environment as 'development' for feature flags
   return 'development';
 }
 

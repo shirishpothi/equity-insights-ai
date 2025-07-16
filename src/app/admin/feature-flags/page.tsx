@@ -43,14 +43,14 @@ export default function FeatureFlagsAdminPage() {
   const service = getFeatureFlagService()
 
   // Filter flags based on search query
-  const filteredFlags = Object.entries(allFlags).filter(([key, result]) => {
+  const filteredFlags: [string, FeatureFlagResult][] = Object.entries(allFlags).filter(([key, result]) => {
     const searchLower = searchQuery.toLowerCase()
     return (
       key.toLowerCase().includes(searchLower) ||
       formatFeatureFlagKey(key).toLowerCase().includes(searchLower) ||
       getFeatureFlagCategory(key).toLowerCase().includes(searchLower)
     )
-  })
+  }) as [string, FeatureFlagResult][]
 
   // Group flags by category
   const flagsByCategory = filteredFlags.reduce((acc, [key, result]) => {
@@ -65,7 +65,7 @@ export default function FeatureFlagsAdminPage() {
   const handleToggleFlag = async (flagKey: string) => {
     setLoading(true)
     try {
-      const success = service.toggleFlag(flagKey)
+      const success: boolean = service.toggleFlag(flagKey)
       if (success) {
         toast({
           title: 'Flag Updated',

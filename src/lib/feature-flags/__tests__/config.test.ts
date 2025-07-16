@@ -23,23 +23,30 @@ describe('Feature Flag Configuration', () => {
   });
 
   describe('getCurrentEnvironment', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+
+    afterEach(() => {
+      // Restore original NODE_ENV
+      (process.env as any).NODE_ENV = originalNodeEnv;
+    });
+
     it('should return development by default', () => {
-      delete process.env.NODE_ENV;
+      delete (process.env as any).NODE_ENV;
       expect(getCurrentEnvironment()).toBe('development');
     });
 
     it('should return production when NODE_ENV is production', () => {
-      process.env.NODE_ENV = 'production';
+      (process.env as any).NODE_ENV = 'production';
       expect(getCurrentEnvironment()).toBe('production');
     });
 
     it('should return staging when NODE_ENV is staging', () => {
-      process.env.NODE_ENV = 'staging';
+      (process.env as any).NODE_ENV = 'staging';
       expect(getCurrentEnvironment()).toBe('staging');
     });
 
     it('should return development for unknown NODE_ENV', () => {
-      process.env.NODE_ENV = 'unknown';
+      (process.env as any).NODE_ENV = 'unknown';
       expect(getCurrentEnvironment()).toBe('development');
     });
   });

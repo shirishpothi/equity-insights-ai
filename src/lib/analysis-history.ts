@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-client'
 import { isSupabaseConfigured } from './supabase'
 import type { Database } from './supabase'
 import type { AnalyzeStockOutput } from '@/ai/flows/analyze-stock'
+import { isFeatureEnabled, FEATURE_FLAGS } from '@/lib/feature-flags'
 
 type AnalysisHistory = Database['public']['Tables']['analysis_history']['Row']
 type AnalysisHistoryInsert = Database['public']['Tables']['analysis_history']['Insert']
@@ -22,6 +23,11 @@ export class AnalysisHistoryService {
 
   async saveAnalysis(data: CreateAnalysisHistoryData): Promise<{ success: boolean; error?: string; data?: AnalysisHistoryItem }> {
     try {
+      // Check if Supabase operations are enabled
+      if (!isFeatureEnabled(FEATURE_FLAGS.DATA_SUPABASE_OPERATIONS)) {
+        return { success: false, error: 'Database operations are currently disabled' }
+      }
+
       if (!isSupabaseConfigured()) {
         return { success: false, error: 'Database not configured' }
       }
@@ -60,6 +66,11 @@ export class AnalysisHistoryService {
 
   async getAnalysisHistory(limit = 20, offset = 0): Promise<{ success: boolean; error?: string; data?: AnalysisHistoryItem[] }> {
     try {
+      // Check if Supabase operations are enabled
+      if (!isFeatureEnabled(FEATURE_FLAGS.DATA_SUPABASE_OPERATIONS)) {
+        return { success: false, error: 'Database operations are currently disabled' }
+      }
+
       if (!isSupabaseConfigured()) {
         return { success: false, error: 'Database not configured' }
       }

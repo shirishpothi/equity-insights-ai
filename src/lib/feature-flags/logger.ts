@@ -239,8 +239,20 @@ export class FeatureFlagLogger {
     changes: FeatureFlagChangeLog[];
     performance: FeatureFlagPerformanceLog[];
     errors: FeatureFlagErrorLog[];
-    stats: ReturnType<typeof this.getUsageStats>;
-    performanceStats: ReturnType<typeof this.getPerformanceStats>;
+    stats: {
+      totalUsage: number;
+      uniqueUsers: number;
+      uniqueFlags: number;
+      enabledCount: number;
+      disabledCount: number;
+      flagUsage: Record<string, number>;
+    };
+    performanceStats: {
+      averageEvaluationTime: number;
+      slowestFlag: string | null;
+      fastestFlag: string | null;
+      totalEvaluations: number;
+    };
   } {
     return {
       usage: this.getUsageLogs(),

@@ -284,11 +284,12 @@ export class FeatureFlagService {
       }
 
       const oldValue = { ...existingFlag };
-      this.config.flags[flagKey] = {
+      const updatedFlag = {
         ...existingFlag,
         ...updates,
         updatedAt: new Date(),
-      };
+      } as FeatureFlag;
+      this.config.flags[flagKey] = updatedFlag;
 
       // Log the change
       logFeatureFlagChange(flagKey, oldValue, this.config.flags[flagKey], 'admin', 'Manual update');

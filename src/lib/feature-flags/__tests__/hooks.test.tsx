@@ -7,6 +7,7 @@ import { renderHook } from '@testing-library/react';
 import { useFeatureFlag, useFeatureFlags, useFeatureFlagResult } from '../hooks';
 import { FEATURE_FLAGS } from '../types';
 import { useAuth } from '@/contexts/auth-context';
+import type { User, Session } from '@supabase/supabase-js';
 
 // Mock the auth context
 jest.mock('@/contexts/auth-context', () => ({
@@ -68,6 +69,21 @@ jest.mock('../utils', () => ({
 
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
+// Helper function to create mock auth context
+const createMockAuthContext = (overrides: Partial<ReturnType<typeof useAuth>> = {}) => ({
+  user: null as User | null,
+  session: null as Session | null,
+  loading: false,
+  error: null as string | null,
+  signInWithGoogle: jest.fn(),
+  signOut: jest.fn(),
+  clearError: jest.fn(),
+  retryAuth: jest.fn(),
+  refreshSession: jest.fn(),
+  sessionExpiresAt: null as number | null,
+  ...overrides,
+});
+
 describe('Feature Flag Hooks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -75,18 +91,7 @@ describe('Feature Flag Hooks', () => {
 
   describe('useFeatureFlag', () => {
     it('should return true for enabled flag', () => {
-      mockUseAuth.mockReturnValue({
-        user: null,
-        session: null,
-        loading: false,
-        error: null,
-        signInWithGoogle: jest.fn(),
-        signOut: jest.fn(),
-        clearError: jest.fn(),
-        retryAuth: jest.fn(),
-        refreshSession: jest.fn(),
-        sessionExpiresAt: null,
-      });
+      mockUseAuth.mockReturnValue(createMockAuthContext());
 
       const { result } = renderHook(() => 
         useFeatureFlag(FEATURE_FLAGS.AI_STOCK_ANALYSIS)
@@ -96,18 +101,7 @@ describe('Feature Flag Hooks', () => {
     });
 
     it('should return false for disabled flag', () => {
-      mockUseAuth.mockReturnValue({
-        user: null,
-        session: null,
-        loading: false,
-        error: null,
-        signInWithGoogle: jest.fn(),
-        signOut: jest.fn(),
-        clearError: jest.fn(),
-        retryAuth: jest.fn(),
-        refreshSession: jest.fn(),
-        sessionExpiresAt: null,
-      });
+      mockUseAuth.mockReturnValue(createMockAuthContext());
 
       const { result } = renderHook(() => 
         useFeatureFlag(FEATURE_FLAGS.AI_TICKER_SUGGESTIONS)
@@ -135,18 +129,10 @@ describe('Feature Flag Hooks', () => {
         user: mockUser,
       };
 
-      mockUseAuth.mockReturnValue({
+      mockUseAuth.mockReturnValue(createMockAuthContext({
         user: mockUser,
         session: mockSession,
-        loading: false,
-        error: null,
-        signInWithGoogle: jest.fn(),
-        signOut: jest.fn(),
-        clearError: jest.fn(),
-        retryAuth: jest.fn(),
-        refreshSession: jest.fn(),
-        sessionExpiresAt: null,
-      });
+      }));
 
       const { result } = renderHook(() => 
         useFeatureFlag(FEATURE_FLAGS.AI_STOCK_ANALYSIS)
@@ -156,18 +142,7 @@ describe('Feature Flag Hooks', () => {
     });
 
     it('should accept additional context', () => {
-      mockUseAuth.mockReturnValue({
-        user: null,
-        session: null,
-        loading: false,
-        error: null,
-        signInWithGoogle: jest.fn(),
-        signOut: jest.fn(),
-        clearError: jest.fn(),
-        retryAuth: jest.fn(),
-        refreshSession: jest.fn(),
-        sessionExpiresAt: null,
-      });
+      mockUseAuth.mockReturnValue(createMockAuthContext());
 
       const additionalContext = {
         sessionId: 'custom-session-id',
@@ -183,18 +158,7 @@ describe('Feature Flag Hooks', () => {
 
   describe('useFeatureFlagResult', () => {
     it('should return detailed flag result', () => {
-      mockUseAuth.mockReturnValue({
-        user: null,
-        session: null,
-        loading: false,
-        error: null,
-        signInWithGoogle: jest.fn(),
-        signOut: jest.fn(),
-        clearError: jest.fn(),
-        retryAuth: jest.fn(),
-        refreshSession: jest.fn(),
-        sessionExpiresAt: null,
-      });
+      mockUseAuth.mockReturnValue(createMockAuthContext());
 
       const { result } = renderHook(() => 
         useFeatureFlagResult(FEATURE_FLAGS.AI_STOCK_ANALYSIS)
@@ -209,18 +173,7 @@ describe('Feature Flag Hooks', () => {
 
   describe('useFeatureFlags', () => {
     it('should return multiple flag states', () => {
-      mockUseAuth.mockReturnValue({
-        user: null,
-        session: null,
-        loading: false,
-        error: null,
-        signInWithGoogle: jest.fn(),
-        signOut: jest.fn(),
-        clearError: jest.fn(),
-        retryAuth: jest.fn(),
-        refreshSession: jest.fn(),
-        sessionExpiresAt: null,
-      });
+      mockUseAuth.mockReturnValue(createMockAuthContext());
 
       const flagKeys = [
         FEATURE_FLAGS.AI_STOCK_ANALYSIS,
@@ -236,18 +189,7 @@ describe('Feature Flag Hooks', () => {
     });
 
     it('should handle empty flag array', () => {
-      mockUseAuth.mockReturnValue({
-        user: null,
-        session: null,
-        loading: false,
-        error: null,
-        signInWithGoogle: jest.fn(),
-        signOut: jest.fn(),
-        clearError: jest.fn(),
-        retryAuth: jest.fn(),
-        refreshSession: jest.fn(),
-        sessionExpiresAt: null,
-      });
+      mockUseAuth.mockReturnValue(createMockAuthContext());
 
       const { result } = renderHook(() => 
         useFeatureFlags([])
@@ -268,18 +210,9 @@ describe('Feature Flag Hooks', () => {
         created_at: '2023-01-01T00:00:00Z',
       };
 
-      mockUseAuth.mockReturnValue({
+      mockUseAuth.mockReturnValue(createMockAuthContext({
         user: mockUser,
-        session: null,
-        loading: false,
-        error: null,
-        signInWithGoogle: jest.fn(),
-        signOut: jest.fn(),
-        clearError: jest.fn(),
-        retryAuth: jest.fn(),
-        refreshSession: jest.fn(),
-        sessionExpiresAt: null,
-      });
+      }));
 
       const { result, rerender } = renderHook(() => 
         useFeatureFlag(FEATURE_FLAGS.AI_STOCK_ANALYSIS)
@@ -299,23 +232,14 @@ describe('Feature Flag Hooks', () => {
     it('should update when user context changes', () => {
       const { result, rerender } = renderHook(
         ({ user }) => {
-          mockUseAuth.mockReturnValue({
+          mockUseAuth.mockReturnValue(createMockAuthContext({
             user,
-            session: null,
-            loading: false,
-            error: null,
-            signInWithGoogle: jest.fn(),
-            signOut: jest.fn(),
-            clearError: jest.fn(),
-            retryAuth: jest.fn(),
-            refreshSession: jest.fn(),
-            sessionExpiresAt: null,
-          });
+          }));
           
           return useFeatureFlag(FEATURE_FLAGS.AI_STOCK_ANALYSIS);
         },
         {
-          initialProps: { user: null }
+          initialProps: { user: null as User | null }
         }
       );
 

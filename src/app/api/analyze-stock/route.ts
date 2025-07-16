@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { analyzeStock } from '@/ai/flows/analyze-stock';
+import { isFeatureEnabled, FEATURE_FLAGS } from '@/lib/feature-flags';
 
 const formSchema = z.object({
   ticker: z.string().min(1, 'Ticker is required.'),
@@ -10,15 +11,37 @@ const formSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if AI stock analysis is enabled
+    if (!isFeatureEnabled(FEATURE_FLAGS.AI_STOCK_ANALYSIS)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'AI stock analysis is currently disabled.'
+        },
+        { status: 503 }
+      );
+    }
+
+    // Check if Gemini API integration is enabled
+    if (!isFeatureEnabled(FEATURE_FLAGS.DATA_GEMINI_API)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'AI service integration is currently disabled.'
+        },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const validatedData = formSchema.parse(body);
-    
+
     // Check if we have the required API key
     if (!process.env.GEMINI_API_KEY && !process.env.GOOGLE_GENAI_API_KEY) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'AI service is not configured. Please ensure the GEMINI_API_KEY is set.' 
+        {
+          success: false,
+          error: 'AI service is not configured. Please ensure the GEMINI_API_KEY is set.'
         },
         { status: 500 }
       );

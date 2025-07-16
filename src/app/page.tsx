@@ -41,11 +41,14 @@ import {
   Terminal,
   History,
   Save,
+  Settings,
 } from 'lucide-react';
 import { analysisSections } from '@/lib/constants';
 import { useAuth } from '@/contexts/auth-context';
 import { LoginButton } from '@/components/auth/login-button';
+import { useFeatureFlags, FEATURE_FLAGS } from '@/lib/feature-flags';
 import { UserMenu } from '@/components/auth/user-menu';
+import { AuthStatus } from '@/components/auth/auth-status';
 import { analysisHistoryService } from '@/lib/analysis-history';
 import Link from 'next/link';
 
@@ -67,6 +70,16 @@ export default function Home() {
   const [authPrompt, setAuthPrompt] = useState(false);
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
+
+  // Feature flags
+  const featureFlags = useFeatureFlags([
+    FEATURE_FLAGS.AI_STOCK_ANALYSIS,
+    FEATURE_FLAGS.AI_TICKER_SUGGESTIONS,
+    FEATURE_FLAGS.UI_ANALYSIS_HISTORY,
+    FEATURE_FLAGS.UI_PDF_EXPORT,
+    FEATURE_FLAGS.UI_COPY_TO_CLIPBOARD,
+    FEATURE_FLAGS.ADMIN_FEATURE_FLAG_MANAGEMENT,
+  ]);
 
   const [isCopied, setIsCopied] = useState(false);
   const [suggestions, setSuggestions] = useState<TickerSuggestionOutput>([]);
@@ -104,6 +117,13 @@ export default function Home() {
     setSubmittedData(values);
     setAuthPrompt(false);
 
+    // Check if AI stock analysis is enabled
+    if (!featureFlags[FEATURE_FLAGS.AI_STOCK_ANALYSIS]) {
+      setError('AI stock analysis is currently disabled.');
+      setIsLoading(false);
+      return;
+    }
+
     const result = await handleStockAnalysis(values);
 
     if (result.success) {
@@ -123,6 +143,11 @@ export default function Home() {
 
   const saveAnalysisToHistory = async (formData: z.infer<typeof formSchema>, analysisData: AnalyzeStockOutput) => {
     if (!user) return;
+
+    // Check if analysis history feature is enabled
+    if (!featureFlags[FEATURE_FLAGS.UI_ANALYSIS_HISTORY]) {
+      return;
+    }
 
     setIsSaving(true);
     const result = await analysisHistoryService.saveAnalysis({
@@ -151,6 +176,17 @@ export default function Home() {
   
   const handleCopy = () => {
     if (!analysisResult) return;
+
+    // Check if copy to clipboard feature is enabled
+    if (!featureFlags[FEATURE_FLAGS.UI_COPY_TO_CLIPBOARD]) {
+      toast({
+        title: "Feature Unavailable",
+        description: "Copy to clipboard is currently disabled.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const reportText = analysisSections
       .map(({ key, title }) => {
         const content = analysisResult[key]
@@ -171,6 +207,17 @@ export default function Home() {
 
   const handleDownloadPdf = async () => {
     if (!analysisResult || !submittedTicker) return;
+
+    // Check if PDF export feature is enabled
+    if (!featureFlags[FEATURE_FLAGS.UI_PDF_EXPORT]) {
+      toast({
+        title: "Feature Unavailable",
+        description: "PDF export is currently disabled.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const input = document.getElementById('pdf-report');
     if (!input) {
       setError('Could not generate PDF. Report element not found.');
@@ -236,6 +283,13 @@ export default function Home() {
       return;
     }
 
+    // Only show suggestions if the feature is enabled
+    if (!featureFlags[FEATURE_FLAGS.AI_TICKER_SUGGESTIONS]) {
+      setSuggestions([]);
+      setIsSuggesting(false);
+      return;
+    }
+
     setIsSuggesting(true);
     debounceTimeout.current = setTimeout(async () => {
       if (value === form.getValues('ticker')) {
@@ -263,7 +317,7 @@ export default function Home() {
           {/* Navigation Bar */}
           <nav className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-4">
-              {user && (
+              {user && featureFlags[FEATURE_FLAGS.UI_ANALYSIS_HISTORY] && (
                 <Button variant="outline" asChild>
                   <Link href="/history">
                     <History className="mr-2 h-4 w-4" />
@@ -271,12 +325,16 @@ export default function Home() {
                   </Link>
                 </Button>
               )}
-            </div>
-            <div className="flex items-center space-x-4">
-              {!authLoading && (
-                user ? <UserMenu /> : <LoginButton variant="outline" />
+              {user && featureFlags[FEATURE_FLAGS.ADMIN_FEATURE_FLAG_MANAGEMENT] && (
+                <Button variant="outline" asChild>
+                  <Link href="/admin/feature-flags">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Admin
+                  </Link>
+                </Button>
               )}
             </div>
+            <AuthStatus />
           </nav>
 
           <header className="text-center mb-12">
@@ -466,18 +524,22 @@ export default function Home() {
                           )}
                         </Button>
                       )}
-                      <Button variant="outline" onClick={handleCopy} className="purple-glow w-[130px]">
-                          {isCopied ? (
-                              <CheckCircle2 className="mr-2 h-4 w-4 animate-pop-in" />
-                          ) : (
-                              <Copy className="mr-2 h-4 w-4" />
-                          )}
-                          {isCopied ? 'Copied!' : 'Copy Text'}
-                      </Button>
-                      <Button variant="outline" onClick={handleDownloadPdf} disabled={isGeneratingPdf} className="purple-glow w-[170px]">
-                          <Download className={cn("mr-2 h-4 w-4", isGeneratingPdf && "animate-bounce")} />
-                          {isGeneratingPdf ? 'Downloading...' : 'Download PDF'}
-                      </Button>
+                      {featureFlags[FEATURE_FLAGS.UI_COPY_TO_CLIPBOARD] && (
+                        <Button variant="outline" onClick={handleCopy} className="purple-glow w-[130px]">
+                            {isCopied ? (
+                                <CheckCircle2 className="mr-2 h-4 w-4 animate-pop-in" />
+                            ) : (
+                                <Copy className="mr-2 h-4 w-4" />
+                            )}
+                            {isCopied ? 'Copied!' : 'Copy Text'}
+                        </Button>
+                      )}
+                      {featureFlags[FEATURE_FLAGS.UI_PDF_EXPORT] && (
+                        <Button variant="outline" onClick={handleDownloadPdf} disabled={isGeneratingPdf} className="purple-glow w-[170px]">
+                            <Download className={cn("mr-2 h-4 w-4", isGeneratingPdf && "animate-bounce")} />
+                            {isGeneratingPdf ? 'Downloading...' : 'Download PDF'}
+                        </Button>
+                      )}
                   </div>
               </div>
               <Card className="bg-card/50 backdrop-blur-sm border-white/10 purple-glow">

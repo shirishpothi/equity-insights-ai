@@ -39,8 +39,8 @@ export {
   checkFeatureFlag,
 } from './service';
 
-// Export React hooks (will be created next)
-export { useFeatureFlag, useFeatureFlags } from './hooks';
+// Export React hooks
+export { useFeatureFlag, useFeatureFlags, useAllFeatureFlags, useFeatureFlagResult } from './hooks';
 
 // Export utilities
 export { createFeatureFlagContext } from './utils';

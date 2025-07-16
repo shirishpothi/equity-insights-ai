@@ -12,7 +12,7 @@
 
 const https = require('https');
 
-const SUPABASE_PROJECT_ID = 'cnncodajczcuofseptkm';
+const SUPABASE_PROJECT_ID = 'cgqpqlmpywtbanztanvy';
 const SUPABASE_API_URL = 'https://api.supabase.com';
 
 function makeSupabaseRequest(path, method, data, token) {
