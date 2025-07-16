@@ -244,6 +244,7 @@ describe('Feature Flag Utilities', () => {
         expires_in: 3600,
         expires_at: Date.now() / 1000 + 3600,
         token_type: 'bearer',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         user: { id: 'user1', email: 'test@example.com' } as any,
       };
 
@@ -253,6 +254,7 @@ describe('Feature Flag Utilities', () => {
         expires_in: 3600,
         expires_at: Date.now() / 1000 + 3600,
         token_type: 'bearer',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         user: { id: 'user1', email: 'test@example.com' } as any,
       };
 
@@ -269,6 +271,7 @@ describe('Feature Flag Utilities', () => {
         expires_in: 3600,
         expires_at: Date.now() / 1000 + 3600,
         token_type: 'bearer',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         user: { id: 'user1', email: 'test1@example.com' } as any,
       };
 
@@ -278,6 +281,7 @@ describe('Feature Flag Utilities', () => {
         expires_in: 3600,
         expires_at: Date.now() / 1000 + 3600,
         token_type: 'bearer',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         user: { id: 'user2', email: 'test2@example.com' } as any,
       };
 

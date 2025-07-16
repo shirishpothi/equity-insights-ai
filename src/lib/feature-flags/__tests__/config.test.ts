@@ -138,6 +138,7 @@ describe('Feature Flag Configuration', () => {
 
       // Clear module cache to ensure fresh load
       jest.resetModules();
+      // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any
       const { loadFeatureFlagConfig } = require('../config') as { loadFeatureFlagConfig: () => any };
 
       const config = loadFeatureFlagConfig();

@@ -28,7 +28,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [retryCount, setRetryCount] = useState(0)
   const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null)
   const supabase = createClient()
 
@@ -48,7 +47,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const sessionInfo = await sessionManager.validateAndRefreshSession()
 
       updateSessionState(sessionInfo.session)
-      setRetryCount(0)
     } catch (error) {
       console.warn(`Failed to get session (attempt ${attempt}):`, error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to get session'
@@ -60,7 +58,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setError(errorMessage)
-      setRetryCount(attempt)
     } finally {
       setLoading(false)
     }

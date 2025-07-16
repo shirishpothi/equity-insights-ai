@@ -73,6 +73,7 @@ describe('FeatureFlagLogger', () => {
 
     it('should trim logs when exceeding max size', () => {
       // Set a smaller max size for testing
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (logger as any).maxLogSize = 3;
 
       // Add more logs than the max size

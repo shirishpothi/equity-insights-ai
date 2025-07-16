@@ -289,7 +289,8 @@ export class FeatureFlagLogger {
   /**
    * Send logs to external logging service
    */
-  private sendToExternalLogger(type: string, log: unknown): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private sendToExternalLogger(_type: string, _log: unknown): void {
     // In a real implementation, you would send logs to services like:
     // - DataDog
     // - New Relic

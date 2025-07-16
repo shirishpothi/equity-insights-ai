@@ -241,6 +241,7 @@ describe('FeatureFlagService', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
       
       // This should not throw but return false
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const success = service.updateFlag(FEATURE_FLAGS.AI_STOCK_ANALYSIS, null as any);
       expect(success).toBe(false);
       
